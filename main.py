@@ -61,7 +61,7 @@ class Laser:
 class Ship:
     
     COOLDOWN = 30
-    
+ 
     def __init__(self, x, y, health=100):
         self.x = x
         self.y = y
@@ -119,7 +119,22 @@ class Player(Ship):
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
-        
+    ##################################################
+
+
+    def cooldown(self):
+        if self.cool_down_counter >= self.COOLDOWN:
+            self.cool_down_counter = 0
+        elif self.cool_down_counter > 0:
+            self.cool_down_counter += SPEED
+
+    # def shoot(self):
+    #     if self.cool_down_counter == 0:
+    #         laser = Laser(self.x, self.y, self.laser_img)
+    #         self.lasers.append(laser)
+    #         self.cool_down_counter = 1
+    ##########################################
+
     def move_lasers(self, vel, objs):
         self.cooldown()
         for laser in self.lasers:
@@ -129,8 +144,8 @@ class Player(Ship):
             else:
                 for obj in objs:
                     if laser.collision(obj):
-                        objs.remove(obj)
                         self.lasers.remove(laser)
+                        objs.remove(obj)
     
     def draw(self, window):
         super().draw(window)
@@ -182,7 +197,8 @@ def main():
     lives = 5
     main_font = pygame.font.SysFont("comicsans", 30)
     lost_font = pygame.font.SysFont("comicsans", 30)
-
+    global SPEED
+    SPEED = 1
     enemies = []  
     wave_length = 5
     enemy_vel = 1 #this dictates the unit speed of enemyShips
@@ -238,8 +254,7 @@ def main():
         
         if len(enemies) == 0:
             level += 1
-            if COOLDOWN > 0:
-                COOLDOWN -= 5 ##########################
+            SPEED += 1
             wave_length += 5
             for i in range(wave_length):
                 enemy = Enemy(random.randrange(50, WIDTH-100), random.randrange(-1500, -100), random.choice(["red", "green", "blue"]))
